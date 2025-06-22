@@ -1,39 +1,49 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>出席フォーム</title>
+  <style>
+    body { font-family: sans-serif; padding: 2em; background: #f9f9f9; }
+    form { background: white; padding: 1.5em; border-radius: 10px; box-shadow: 0 0 10px #ccc; max-width: 400px; margin: auto; }
+    label { display: block; margin-top: 1em; }
+    input { width: 100%; padding: 0.5em; font-size: 1em; }
+    button { margin-top: 1.5em; padding: 0.8em; width: 100%; font-size: 1em; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #45a049; }
+    #result { margin-top: 1em; font-weight: bold; text-align: center; }
+  </style>
 </head>
 <body>
-  <h1>出席フォーム</h1>
 
   <form id="attendanceForm">
-    <label>名前：</label>
-    <input type="text" id="name" required><br><br>
+    <h2>出席フォーム</h2>
 
-    <label>4桁PIN：</label>
-    <input type="password" id="pin" pattern="\d{4}" required><br><br>
+    <label for="name">名前：</label>
+    <input type="text" id="name" name="name" required>
+
+    <label for="pin">4桁のPIN：</label>
+    <input type="password" id="pin" name="pin" pattern="\d{4}" required>
 
     <button type="button" onclick="submitAttendance()">出席する</button>
-  </form>
 
-  <p id="result"></p>
+    <p id="result"></p>
+  </form>
 
   <script>
     async function submitAttendance() {
-      const name = document.getElementById("name").value;
-      const pin = document.getElementById("pin").value;
+      const name = document.getElementById("name").value.trim();
+      const pin = document.getElementById("pin").value.trim();
       const resultEl = document.getElementById("result");
 
       if (!/^\d{4}$/.test(pin)) {
-        resultEl.textContent = "PINは4桁の数字で入力してください。";
+        resultEl.textContent = "⚠️ PINは4桁の数字で入力してください。";
         return;
       }
 
       resultEl.textContent = "送信中...";
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/AKfycbyA7w6bZCZJmycD3SIOplFzcaezKJd2CT3CVyMr9BejPQOUsO2PVkJO2XtJ6VbumspN/exec", {
+        const response = await fetch("https://script.google.com/macros/s/ここにあなたのGASのexecURLを入れてください/exec", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
@@ -42,16 +52,19 @@
         });
 
         const res = await response.json();
+
         if (res.status === "success") {
           resultEl.textContent = `✅ 出席完了：${res.name}`;
         } else {
           resultEl.textContent = `❌ エラー：${res.message}`;
         }
-      } catch (err) {
-        resultEl.textContent = "❌ 通信エラー（GASのURL・公開設定を確認）";
-        console.error(err);
+
+      } catch (error) {
+        console.error(error);
+        resultEl.textContent = "❌ 通信エラー：GASの公開設定やURLを確認してください。";
       }
     }
   </script>
+
 </body>
 </html>
