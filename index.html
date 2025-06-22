@@ -43,13 +43,13 @@
       resultEl.textContent = "送信中...";
 
       try {
-        const response = await fetch("https://script.google.com/macros/s/ここにあなたのGASのexecURLを入れてください/exec", {
+        const response = await fetch("https://script.google.com/macros/s/AKfycbw7nA5M0tF7MKYoH1cd2Em04jjg2dyQ3xZ5fjIxeK2O44uijuG48A_jbbhDqsXs6NVy/exec", {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
           body: JSON.stringify({ name, pin })
-        });
+      });
 
         const res = await response.json();
 
